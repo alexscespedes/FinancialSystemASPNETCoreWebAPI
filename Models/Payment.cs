@@ -8,10 +8,7 @@ public class Payment
     public int LoanId { get; set; }
     public Loan? Loan { get; set; }
     public decimal Amount { get; set; }
-    public DateTime PaymentDate { get; set; }
+    public DateTime PaymentDate { get; set; } = DateTime.UtcNow;
     public int RecordedBy { get; set; }
     public User? User { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdateAt { get; set; }
-
 }

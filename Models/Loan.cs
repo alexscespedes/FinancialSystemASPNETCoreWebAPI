@@ -15,9 +15,8 @@ public class Loan
     public LoanStatus LoanStatus { get; set; }
     public int CreatedBy { get; set; }
     public User? User { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
-
 }

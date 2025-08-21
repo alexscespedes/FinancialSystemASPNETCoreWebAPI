@@ -13,7 +13,7 @@ public class Loan
     public int TermsMonth { get; set; }
     public DateTime StartDate { get; set; }
     public LoanStatus LoanStatus { get; set; }
-    public int CreatedBy { get; set; }
+    public int UserId { get; set; }
     public User? User { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

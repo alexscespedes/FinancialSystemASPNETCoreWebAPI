@@ -38,11 +38,11 @@ public class DbInitializer
         var loans = new List<Loan>
         {
             new Loan { CustomerId = 1, PrincipalAmount = 1000000, InterestRate = 0.12m, TermsMonth = 60, StartDate = new DateTime(2025, 08, 25), LoanStatus = LoanStatus.Active,
-                        CreatedBy = 1 },
+                        UserId = 1 },
             new Loan { CustomerId = 2, PrincipalAmount = 500000, InterestRate = 0.09m, TermsMonth = 52, StartDate = new DateTime(2025, 08, 27), LoanStatus = LoanStatus.Renewed,
-                        CreatedBy = 2 },
+                        UserId = 2 },
             new Loan { CustomerId = 3, PrincipalAmount = 999990, InterestRate = 0.10m, TermsMonth = 56, StartDate = new DateTime(2025, 08, 29), LoanStatus = LoanStatus.Overdue,
-                        CreatedBy = 2 }
+                        UserId = 2 }
         };
 
         context.Loans.AddRange(loans);
@@ -50,9 +50,9 @@ public class DbInitializer
 
         var payments = new List<Payment>
         {
-            new Payment { LoanId = 1, Amount = 150000, RecordedBy = 2 },
-            new Payment { LoanId = 1, Amount = 20000, RecordedBy = 2 },
-            new Payment { LoanId = 1, Amount = 385200, RecordedBy = 3 },
+            new Payment { LoanId = 1, Amount = 150000, UserId = 2 },
+            new Payment { LoanId = 1, Amount = 20000, UserId = 2 },
+            new Payment { LoanId = 1, Amount = 385200, UserId = 3 },
         };
 
         context.Payments.AddRange(payments);

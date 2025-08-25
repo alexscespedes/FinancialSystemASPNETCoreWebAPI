@@ -40,9 +40,8 @@ public class CustomerService : ICustomerService
     public async Task<Customer?> GetByIdAsync(int id)
     {
         var customer = await _context.Customers.FindAsync(id);
-
+        
         if (customer == null) return null;
-
         return customer;
     }
 

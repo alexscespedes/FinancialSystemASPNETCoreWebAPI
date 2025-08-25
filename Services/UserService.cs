@@ -23,7 +23,6 @@ public class UserService : IUserService
     public async Task<bool> DeleteAsync(int id)
     {
         var user = await _context.Users.FindAsync(id);
-
         if (user == null) return false;
 
         _context.Users.Remove(user);
@@ -39,6 +38,7 @@ public class UserService : IUserService
     public async Task<User?> GetByIdAsync(int id)
     {
         var user = await _context.Users.FindAsync(id);
+        
         if (user == null) return null;
         return user;
     }

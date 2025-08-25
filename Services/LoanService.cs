@@ -53,7 +53,7 @@ public class LoanService : ILoanService
 
     public async Task<bool> UpdateAsync(int id, Loan loan)
     {
-         var exists = await _context.Loans.AnyAsync(l => l.Id == id);
+        var exists = await _context.Loans.AnyAsync(l => l.Id == id);
 
         if (!exists) return false;
 

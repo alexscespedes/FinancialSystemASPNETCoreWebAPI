@@ -25,7 +25,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
-
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 
 var app = builder.Build();

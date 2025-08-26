@@ -1,3 +1,4 @@
+using FinancialSystemApi.DTOs;
 using FinancialSystemApi.Models;
 using FinancialSystemApi.Services;
 using Microsoft.AspNetCore.Http;
@@ -32,11 +33,11 @@ namespace FinancialSystemApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Customer>> CreateCustomer(Customer customer)
+        public async Task<ActionResult<Customer>> CreateCustomer(CustomerDto dto)
         {
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
-            var newCustomer = await _service.CreateAsync(customer);
+            var customer = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
         }
 

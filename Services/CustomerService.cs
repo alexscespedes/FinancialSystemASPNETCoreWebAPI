@@ -1,5 +1,6 @@
 using System;
 using FinancialSystemApi.Data;
+using FinancialSystemApi.DTOs;
 using FinancialSystemApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,17 +15,32 @@ public class CustomerService : ICustomerService
         _context = context;
     }
 
-    public async Task<Customer> CreateAsync(Customer customer)
+    public async Task<CustomerDto> CreateAsync(CustomerDto dto)
     {
+        var customer = new Customer
+        {
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            Phone = dto.Phone,
+            Email = dto.Email
+        };
+
         _context.Customers.Add(customer);
         await _context.SaveChangesAsync();
-        return customer;
+
+        return new CustomerDto
+        {
+            Id = customer.Id,
+            FirstName = customer.FirstName,
+            LastName = customer.LastName,
+            Phone = customer.Phone,
+            Email = customer.Email
+        };
     }
 
     public async Task<bool> DeleteAsync(int id)
     {
         var customer = await _context.Customers.FindAsync(id);
-
         if (customer == null) return false;
 
         _context.Customers.Remove(customer);
@@ -32,17 +48,34 @@ public class CustomerService : ICustomerService
         return true;
     }
 
-    public async Task<IEnumerable<Customer>> GetAllAsync()
+    public async Task<IEnumerable<CustomerDto>> GetAllAsync()
     {
-        return await _context.Customers.ToListAsync();
+        var customer = _context.Customers.AsQueryable();
+
+        return await customer
+            .Select(c => new CustomerDto
+            {
+                Id = c.Id,
+                FirstName = c.FirstName,
+                LastName = c.LastName,
+                Phone = c.Phone,
+                Email = c.Email
+            }).ToListAsync();
     }
 
-    public async Task<Customer?> GetByIdAsync(int id)
+    public async Task<CustomerDto?> GetByIdAsync(int id)
     {
         var customer = await _context.Customers.FindAsync(id);
-        
         if (customer == null) return null;
-        return customer;
+
+        return new CustomerDto
+        {
+            Id = customer.Id,
+            FirstName = customer.FirstName,
+            LastName = customer.LastName,
+            Phone = customer.Phone,
+            Email = customer.Email
+        };
     }
 
     public async Task<bool> UpdateAsync(int id, Customer customer)

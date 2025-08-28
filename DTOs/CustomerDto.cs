@@ -7,10 +7,12 @@ public class CustomerDto
 {
     public int Id { get; set; }
     
-    [Required, StringLength(50)]
+    [Required(ErrorMessage = "FirstName is required.")]
+    [StringLength(50, ErrorMessage = "FirstName cannot exceed 50 characters.")]
     public string FirstName { get; set; } = string.Empty;
 
-    [Required, StringLength(50)]
+    [Required(ErrorMessage = "LastName is required.")]
+    [StringLength(50, ErrorMessage = "LastName cannot exceed 50 characters.")]
     public string LastName { get; set; } = string.Empty;
 
     [DataType(DataType.PhoneNumber)]

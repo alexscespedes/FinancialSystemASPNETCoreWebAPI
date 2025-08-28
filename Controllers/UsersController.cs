@@ -10,10 +10,12 @@ namespace FinancialSystemApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _service;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IUserService service)
+        public UsersController(IUserService service, ILogger<UsersController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -37,6 +39,8 @@ namespace FinancialSystemApi.Controllers
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
             var newUser = await _service.CreateAsync(user);
+            _logger.LogInformation("User added: {User}", user.Username);
+
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
@@ -46,8 +50,13 @@ namespace FinancialSystemApi.Controllers
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
             var userUpdated = await _service.UpdateAsync(id, user);
-            if (!userUpdated) return NotFound();
+            if (!userUpdated)
+            {
+                _logger.LogWarning("Attempted to update non-existent user with id: {Id}", id);
+                return NotFound();
+            }
 
+            _logger.LogInformation("User updated: {User}", user.Username);
             return NoContent();
         }
 
@@ -55,8 +64,13 @@ namespace FinancialSystemApi.Controllers
         public async Task<IActionResult> DeleteUser(int id)
         {
             var userDeleted = await _service.DeleteAsync(id);
-            if (!userDeleted) return NotFound();
+            if (!userDeleted)
+            {
+                _logger.LogWarning("Attempted to delete non-existent user with id: {Id}", id);
+                return NotFound();
+            }
 
+            _logger.LogInformation("User deleted: {Id}", id);
             return NoContent();
         }
     }

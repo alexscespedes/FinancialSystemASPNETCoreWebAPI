@@ -10,10 +10,12 @@ namespace FinancialSystemApi.Controllers
     public class PaymentsController : ControllerBase
     {
         private readonly IPaymentService _service;
+        private readonly ILogger<PaymentsController> _logger;
 
-        public PaymentsController(IPaymentService service)
+        public PaymentsController(IPaymentService service, ILogger<PaymentsController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -37,6 +39,8 @@ namespace FinancialSystemApi.Controllers
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
             var newPayment = await _service.CreateAsync(payment);
+            _logger.LogInformation("Payment added: {Payment}", payment.Amount);
+
             return CreatedAtAction(nameof(GetPayment), new { id = payment.Id }, payment);
         }
 
@@ -46,8 +50,13 @@ namespace FinancialSystemApi.Controllers
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
             var paymentUpdated = await _service.UpdateAsync(id, payment);
-            if (!paymentUpdated) return NotFound();
+            if (!paymentUpdated)
+            {
+                _logger.LogWarning("Attempted to update non-existent payment with id: {Id}", id);
+                return NotFound();
+            }
 
+            _logger.LogInformation("Payment updated: {Payment}", payment.Amount);
             return NoContent();
         }
 
@@ -55,8 +64,13 @@ namespace FinancialSystemApi.Controllers
         public async Task<IActionResult> DeletePayment(int id)
         {
             var paymentDeleted = await _service.DeleteAsync(id);
-            if (!paymentDeleted) return NotFound();
+            if (!paymentDeleted) 
+            {
+                _logger.LogWarning("Attempted to delete non-existent payment with id: {Id}", id);
+                return NotFound();
+            }
 
+            _logger.LogInformation("Payment deleted: {Id}", id);
             return NoContent();
         }
     }

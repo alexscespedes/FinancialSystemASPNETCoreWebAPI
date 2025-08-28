@@ -10,10 +10,13 @@ namespace FinancialSystemApi.Controllers
     public class LoansController : ControllerBase
     {
         private readonly ILoanService _service;
+        private readonly ILogger<LoansController> _logger;
 
-        public LoansController(ILoanService service)
+
+        public LoansController(ILoanService service, ILogger<LoansController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -37,6 +40,8 @@ namespace FinancialSystemApi.Controllers
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
             var newLoan = await _service.CreateAsync(loan);
+            _logger.LogInformation("Loan added: {Loan}", loan.PrincipalAmount);
+
             return CreatedAtAction(nameof(GetLoan), new { id = loan.Id }, loan);
         }
 
@@ -46,8 +51,13 @@ namespace FinancialSystemApi.Controllers
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
             var loanUpdated = await _service.UpdateAsync(id, loan);
-            if (!loanUpdated) return NotFound();
+            if (!loanUpdated)
+            {
+                _logger.LogWarning("Attempted to update non-existent loan with id: {Id}", id);
+                return NotFound();
+            }
 
+            _logger.LogInformation("Payment updated: {Payment}", loan.PrincipalAmount);
             return NoContent();
         }
 
@@ -55,8 +65,13 @@ namespace FinancialSystemApi.Controllers
         public async Task<IActionResult> DeleteLoan(int id)
         {
             var loanDeleted = await _service.DeleteAsync(id);
-            if (!loanDeleted) return NotFound();
+            if (!loanDeleted)
+            {
+                _logger.LogWarning("Attempted to delete non-existent loan with id: {Id}", id);
+                return NotFound();
+            }
 
+            _logger.LogInformation("Payment deleted: {Id}", id);
             return NoContent();
         }
 

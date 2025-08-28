@@ -11,10 +11,12 @@ namespace FinancialSystemApi.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly ICustomerService _service;
+        private readonly ILogger<CustomersController> _logger;
 
-        public CustomersController(ICustomerService service)
+        public CustomersController(ICustomerService service, ILogger<CustomersController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -38,6 +40,8 @@ namespace FinancialSystemApi.Controllers
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
             var customer = await _service.CreateAsync(dto);
+            _logger.LogInformation("Customer added: {Customer}", dto.FirstName + ' ' + dto.LastName);
+
             return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
         }
 
@@ -47,8 +51,13 @@ namespace FinancialSystemApi.Controllers
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
             var customerUpdated = await _service.UpdateAsync(id, customer);
-            if (!customerUpdated) return NotFound();
+            if (!customerUpdated)
+            {
+                _logger.LogWarning("Attempted to update non-existent customer with id: {Id}", id);
+                return NotFound();
+            }
 
+            _logger.LogInformation("Customer updated: {Customer}", customer.FirstName + ' ' + customer.LastName);
             return NoContent();
         }
 
@@ -56,8 +65,13 @@ namespace FinancialSystemApi.Controllers
         public async Task<IActionResult> DeleteCustomer(int id)
         {
             var customerDeleted = await _service.DeleteAsync(id);
-            if (!customerDeleted) return NotFound();
+            if (!customerDeleted)
+            {
+                _logger.LogWarning("Attempted to delete non-existent customer with id: {Id}", id);
+                return NotFound();
+            }
 
+            _logger.LogInformation("Customer deleted: {Id}", id);
             return NoContent();
         }
     }

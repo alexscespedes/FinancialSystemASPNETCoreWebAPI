@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using FinancialSystemApi.Data;
+using FinancialSystemApi.Middleware;
 using FinancialSystemApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +56,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
